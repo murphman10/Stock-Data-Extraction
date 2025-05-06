@@ -44,10 +44,9 @@ for row in soup.find("tbody").find_all('tr'):
     revenue = col[1].text
     tesla_revenue = pd.concat([tesla_revenue, pd.DataFrame({"Date":[date], "Revenue":[revenue]})], ignore_index=True)
 
-#tesla_revenue["Revenue"] = tesla_revenue['Revenue'].str.replace(',|\$',"")
-#tesla_revenue.dropna(inplace=True)
-#tesla_revenue = tesla_revenue[tesla_revenue['Revenue'] != ""]
-#tesla_revenue.tail()
+tesla_revenue["Revenue"] = tesla_revenue['Revenue'].str.replace(',|\$',"")
+tesla_revenue.dropna(inplace=True)
+tesla_revenue = tesla_revenue[tesla_revenue['Revenue'] != ""]
 
 gme_revenue = pd.DataFrame()
 for row in soup_gme.find("tbody").find_all('tr'):
@@ -55,6 +54,10 @@ for row in soup_gme.find("tbody").find_all('tr'):
     date = col[0].text
     revenue = col[1].text
     gme_revenue = pd.concat([gme_revenue, pd.DataFrame({"Date":[date], "Revenue":[revenue]})], ignore_index=True)
+
+gme_revenue["Revenue"] = gme_revenue['Revenue'].str.replace(',|\$',"")
+gme_revenue.dropna(inplace=True)
+gme_revenue = gme_revenue[gme_revenue['Revenue'] != ""]
 
 #Plot Tesla and GameStop data on a graph
 make_graph(tesla_data, tesla_revenue, 'Tesla')
@@ -65,7 +68,7 @@ def make_graph(stock_data, revenue_data, stock):
     stock_data_specific = stock_data[stock_data.Date <= '2021-06-14']
     revenue_data_specific = revenue_data[revenue_data.Date <= '2021-04-30']
     fig.add_trace(go.Scatter(x=pd.to_datetime(stock_data_specific.Date, infer_datetime_format=True), y=stock_data_specific.Close.astype("float"), name="Share Price"), row=1, col=1)
-    fig.add_trace(go.Scatter(x=pd.to_datetime(revenue_data_specific.Date, infer_datetime_format=True), y=revenue_data_specific.Revenue.astype("string"), name="Revenue"), row=2, col=1) #Revenue.astype was "float"
+    fig.add_trace(go.Scatter(x=pd.to_datetime(revenue_data_specific.Date, infer_datetime_format=True), y=revenue_data_specific.Revenue.astype("float"), name="Revenue"), row=2, col=1)
     fig.update_xaxes(title_text="Date", row=1, col=1)
     fig.update_xaxes(title_text="Date", row=2, col=1)
     fig.update_yaxes(title_text="Price ($US)", row=1, col=1)
